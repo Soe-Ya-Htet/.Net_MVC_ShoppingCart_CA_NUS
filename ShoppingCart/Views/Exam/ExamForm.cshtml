@@ -1,0 +1,65 @@
+﻿@using FSTA.Models;
+
+@{
+    ViewBag.Title = "ExamForm";
+}
+
+<h2>DisplayTour</h2>
+
+
+
+@model FSTA.Models.TourPackage
+
+@{
+    TourPackage tour = (TourPackage)ViewData["tour"];
+    List<int> leaders = (List<int>)ViewData["TourLeaderList"];
+
+}
+
+
+@{
+    using (Html.BeginForm("AssignTourLeader", "ManageTour", FormMethod.Post))
+    {
+        <div>
+            <table>
+                <tr>Tour Details</tr>
+                <tr>
+                    <th>Tour Code</th>
+                    <th>Tour Start Date</th>
+                    <th>Tour End Date</th>
+                </tr>
+                <tr>
+                    <td>@Html.TextBoxFor(m => m.tourCode, new { @readonly = "readonly", @Value = tour.tourCode })</td>
+                    <td>@Html.TextBoxFor(m => m.startDate, new { @readonly = "readonly", @Value = tour.startDate.ToShortDateString() })</td>
+                    <td>@Html.TextBoxFor(m => m.endDate, new { @readonly = "readonly", @Value = tour.endDate.ToShortDateString() })</td>
+                </tr>
+            </table>
+            <table>
+                <tr><th> Available Tour Leaders </th></tr>
+                @foreach (int leader in leaders)
+                {
+                    <tr>
+                        <td>@leader</td>
+                    </tr>
+                }
+
+                <tr>
+                    <td>@Html.TextBoxFor(m => m.tourLeaderID)</td>
+
+                </tr>
+
+                <tr>
+                    <td colspan="2"><input type="submit" value="Assign" /></td>
+                </tr>
+                <tr></tr>
+
+            </table>
+        </div>
+    }
+}
+
+<style>
+    th, tr, td {
+        padding: 5px
+    }
+</style>

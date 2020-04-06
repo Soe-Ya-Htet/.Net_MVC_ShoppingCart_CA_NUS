@@ -1,0 +1,103 @@
+﻿@using ShoppingCart.Models;
+@{
+    List<Cart> products = (List<Cart>)ViewData["Cart"];
+    var user = ViewData["username"];
+    var sessionId = ViewData["sessionId"];
+    UserInfo customer = (UserInfo)ViewData["firstandlastnames"];
+    double grandtotal = 0;
+}
+
+<title>
+    View Cart
+</title>
+
+<form method="post">
+    Hello, @customer.FirstName, @customer.LastName
+    <input type="hidden" name="sessionId" value='@sessionId' />
+    <input style="background-color:transparent; border-width:0px" type="submit" value='Gallery' formaction="/Gallery/ViewProducts?username=@user&sessionid=@sessionId" />
+    |
+    <input style="background-color:transparent; border-width:0px" type="submit" name="Purchases" value='My Purchases' formaction="/History/ViewPurchases?username=@user&sessionid=@sessionId" />
+    |
+    <input style="background-color:transparent; border-width:0px" type="submit" name="Logout" value='Logout' formaction="/Home/Logout" />
+</form>
+
+@foreach (var p in products)
+{
+    grandtotal = grandtotal + p.Quantity * p.Product.Price;
+}
+
+<p style="text-align:right">Grand Total : $@grandtotal</p>
+<form style="text-align:right">
+    <input type="submit" value="Empty Cart" formaction="/Update/EmptyCart?username=@user&sessionid=@sessionId/">
+    <input type="submit" value="Check Out" formaction="/Update/Checkout?username=@user&sessionid=@sessionId/">
+</form>
+<section class="products">
+    <table>
+        @foreach (var p in products)
+        {
+            <tr>
+                <td>
+                    <div class="product-card">
+                        <div class="product-info">
+                            <img style="width: 150px; height:100px" src="~/Content/@(p.Product.ProductName.Split()[1].ToString()).jpg" />
+                            <h5>@p.Product.ProductName</h5>
+                            <h6 style="width:200px">@p.Product.Description</h6>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="cart_prod_price">
+                        <p>Price :  $@p.Product.Price</p>
+                        <form style="text-align:center" method="post">
+                            <p>
+                                Quantity :
+                                <input type="submit" value="-" formaction="/Update/RemovefromCart?productId=@p.ProductId&username=@user" />
+                                <input type="text" value="@p.Quantity" name="quantity" size="5" formaction="/Update/UpdateCart?productId=@p.ProductId&username=@user&qty=">
+                                <input type="submit" value="+" formaction="/Gallery/AddtoCart?productId=@p.ProductId&username=@user">
+                            </p>
+                        </form>
+                        <p>Subtotal: $@(p.Product.Price * p.Quantity)</p>
+                    </div>
+                </td>
+            </tr>
+        }
+    </table>
+</section>
+
+
+<style>
+    td, tr {
+        padding: 2px;
+    }
+
+    a {
+        color: #000;
+        font-size: 12px;
+    }
+
+    .button {
+        border: none;
+        padding: 10px 24px;
+        text-align: center;
+        display: inline-block;
+        width: 250px;
+    }
+
+    .products {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .product-card {
+        padding: 2%;
+        flex-grow: 1;
+        flex-basis: 27%;
+        display: flex;
+    }
+
+    .product-info {
+        margin-top: auto;
+    }
+</style>
+
+

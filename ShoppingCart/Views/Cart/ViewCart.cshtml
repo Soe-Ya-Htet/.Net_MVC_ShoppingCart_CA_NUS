@@ -1,0 +1,135 @@
+﻿@model IEnumerable<ShoppingCart.Models.Cart>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    ViewBag.Title = "Index";
+    var user = ViewData["username"];
+    var sessionId = ViewData["sessionId"];
+
+    double total = 0;
+    foreach (var cart in Model)
+    {
+        total += (cart.Product.Price * cart.Quantity);
+    }
+}
+
+<form method="post">
+    <div style="margin-top : 20px; margin-bottom : 20px">
+        <div style="width:800px; float:left">
+            <b>View Cart</b> &nbsp;
+            <button class="btnlink" type="submit" formaction="/Gallery/ViewProducts?username=@user&sessionid=@sessionId">Continue Shopping</button> &nbsp; | &nbsp;
+            <button class="btnlink" type="submit" formaction="/Cart/CheckOut?username=@user&sessionid=@sessionId">Checkout</button>
+        </div>
+        <text id="newTot" align="right">Total: $@total</text>
+    </div>
+
+    <table class="tbl">
+        @foreach (var cart in Model)
+        {
+            <tr>
+                <td>
+                    <div class="product-card">
+                        <div class="product-info">
+                            <img style="width: 150px; height:100px" src="~/Content/@(cart.Product.ProductName.Split()[1].ToString()).jpg" />
+                            <h5>@cart.Product.ProductName</h5>
+                            <h6 style="width:200px">@cart.Product.Description</h6>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="cart_prod_price">
+                        <p>Price :  <input type="hidden" class="pPrice" value="@cart.Product.Price" />@cart.Product.Price</p>
+                        <p>Quantity : <input class="pQuantity" type="number" id="@cart.ProductId" min="0" max="10" step="1" value="@cart.Quantity" name="@cart.ProductId" onchange="getTotal()" /></p>
+
+                    </div>
+                </td>
+            </tr>
+
+        }
+    </table>
+    <script type="text/javascript">
+
+        document.addEventListener('DOMContentLoaded', function () {
+            getTotal();
+        }, false);
+
+        function getTotal() {
+
+            var productList = document.getElementsByClassName('cart_prod_price');
+            var total = 0;
+            for (var i = 0, len = productList.length; i < len; i++) {
+
+                var list = productList[i];
+                var price = list.getElementsByClassName('pPrice')[0].value;
+                var quantity = list.getElementsByClassName('pQuantity')[0].value;
+                total += parseInt(price) * parseInt(quantity);
+            }
+            
+            document.getElementById("newTot").innerHTML = "Total : $" + total;
+
+        }
+
+        // *** this way is calling post method with jquery ajax :D
+        //function totalPrice(id, qty) {
+        //    alert(qty);
+        //    console.log(qty);
+        //    if (qty < 0) {
+        //        document.getElementById(String(id)).write = 0;
+        //    }
+
+        //    var url = "../Cart/TotalPrice?productId=" + id + "&quantity=" + qty;
+        //    $.ajax({
+        //        url: url,
+        //        type: "POST",
+        //        async: true,
+        //        dataType: "json",
+        //        contentType: "application/json; charset = utf-8",
+        //        success: function (d) {
+        //            document.getElementById("tot").innerHTML = "Total : $" + d.d;
+        //        }
+        //    });
+        //}
+    </script>
+    <style>
+        .product-card {
+            padding: 2%;
+            flex-grow: 1;
+            flex-basis: 27%;
+            display: flex;
+            margin: auto;
+            border: 1px solid black;
+            padding: 10px;
+        }
+
+        .btnlink {
+            background: none !important;
+            color: #0645AD;
+            border: none;
+            padding: 0 !important;
+            font: inherit;
+            /*border is optional*/
+            border-bottom: 1px solid #0645AD;
+            cursor: pointer;
+        }
+
+        .tbl {
+            border-collapse: separate;
+            border-spacing: 0 15px;
+            margin-left: 10%;
+        }
+
+        .cart_prod {
+            float: left;
+        }
+
+        .cart_prod_price {
+            margin-left: 50px;
+        }
+
+        .prod_img {
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+</form>

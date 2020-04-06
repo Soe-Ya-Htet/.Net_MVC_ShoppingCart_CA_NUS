@@ -1,0 +1,81 @@
+﻿@using ShoppingCart.Models;
+@{
+    List<Transaction> purchases = (List<Transaction>)ViewData["purchases"];
+    List<PurchaseDetails> purchasedItems = (List<PurchaseDetails>)ViewData["purchaseditems"];
+}
+
+@{
+    var sessionId = ViewData["sessionId"];
+    int counter = 0;
+    int index = 0;
+}
+
+<title>
+    My Purchases
+</title>
+
+<form method="post">
+    <b>My Purchases</b>
+    <input type="hidden" name="sessionId" value='@sessionId' />
+    <input style="background-color:transparent; border-width:0px" type="submit" name="Home" value='Home' formaction="/Home/Login" />
+     |
+    <input style="background-color:transparent; border-width:0px" type="submit" name="Logout" value='Logout' formaction="/Home/Logout" />
+</form>
+
+<table style="margin-left: auto; margin-right: auto">
+    @foreach (var p in purchases)
+    {
+        if (p.Quantity > 1)
+        {
+            <tr>
+                <td style="text-align:center; width:230px">
+                    <center><img style="width: 150px; height:100px" src="~/Content/@(purchasedItems[index].ProductName.Split()[1].ToString()).jpg" /></center>
+                    <br />@purchasedItems[index].ProductName<br />@purchasedItems[index].Description
+                    <br /><input style="text-align:center; width:230px" type="button" value="Download">
+                </td>
+                <td style="width:500px">
+                    Purchased on: @p.PurchaseDate.ToString("d MMM yyyy")<br />Quantity: @p.Quantity<br />
+                    <div>
+                        <label for="activationcode">Activation Code: </label>
+                        <select id="activationcode">
+                            @while (counter < @p.Quantity)
+                            {
+                                <option>@purchasedItems[index].AtvCode</option>
+                                index += 1;
+                                counter++;
+                            }
+                            counter = 0; 
+                        </select>
+                    </div>
+                </td>
+            </tr>
+        }
+        else
+        {
+            <tr>
+                <td style="text-align:center; width:230px">
+                    <center><img style="width: 150px; height:100px" src="~/content/@(purchasedItems[index].ProductName.Split()[1].ToString()).jpg" /></center>
+                    <br/>@purchasedItems[index].ProductName<br/>@purchasedItems[index].Description
+                    <br/><input style="text-align:center; width:230px" type="button" value="Download">
+                </td>
+                <td style="width:500px">
+                    Purchased on: @p.PurchaseDate.ToString("d MMM yyyy")<br />Quantity: @p.Quantity<br />Activation Code: @purchasedItems[index].AtvCode
+                </td>
+            </tr>
+            index += 1;
+        }
+    }
+</table>
+
+<style>
+    td {
+        padding: 2px;
+    }
+
+    tr {
+        height:260px;
+        padding: 2px;
+    }
+</style>
+
+

@@ -1,0 +1,125 @@
+﻿@using ShoppingCart.Models;
+@{
+    List<Product> products = (List<Product>)ViewData["products"];
+}
+
+@{
+    var user = ViewData["username"];
+    var countItems = ViewData["itemcount"];
+    var sessionId = ViewData["sessionId"];
+    UserInfo customer = (UserInfo)ViewData["firstandlastnames"];
+}
+
+<title>
+    Libraries Gallery
+</title>
+
+<form method="post">
+    <b>Hello, @customer.FirstName, @customer.LastName</b> &nbsp;
+    <input type="hidden" name="sessionId" value='@sessionId' />
+
+    <button class="btnlink" type="submit" formaction="/Cart/ViewCart??username=@user&sessionid=@sessionId">View Cart</button> &nbsp; | &nbsp;
+    <button class="btnlink" type="submit" formaction="/History/ViewPurchases?username=@user&sessionid=@sessionId">My Purchases</button> &nbsp; | &nbsp;
+    <button class="btnlink" type="submit" formaction="/Home/Logout">Logout</button>
+
+    <span style="float:right; height:30px;width:30px;border:1px solid black;border-radius:50%;background-color:gainsboro">
+        <span style="float:right; height:30px;font-size:12px;margin:5px 6px 5px 6px">
+            @countItems
+        </span>
+    </span>
+    <img style="height:30px; width:30px; float:right;" src="~/Content/Cart.png" />
+
+</form>
+
+
+@*<div style="align-content:center; padding: 50px 0px 0px 0px;">
+        <form method="post">
+            <table>
+                @foreach (var p in products)
+                {
+                    <tr>
+                        <td>@p.ProductName</td>
+                        <td style="width: 350px">@p.Description</td>
+                        <td><input type="submit" value="$@p.Price - Add to cart" formaction="/View/AddtoCart?productId=@p.ProductId&username=@user"></td>
+                        <td><input type="submit" value="Remove from cart" formaction="/View/RemovefromCart?productId=@p.ProductId&username=@user"></td>
+                        <td><input type="submit" value="Empty cart" formaction="/View/EmptyCart?productId=@p.ProductId&username=@user"></td>
+                    </tr>
+                }
+            </table>
+        </form>
+
+    </div>*@
+<br />
+<div style="text-align:center">
+    <form action="/Gallery/ViewProducts/">
+        Search Product: <input type="text" name="input">
+        <input type="submit" value="Search">
+    </form>
+</div>
+<br />
+<br />
+<section class="products">
+
+    @foreach (var p in products)
+    {
+        <div class="product-card">
+            <div class="product-info">
+                <center><img style="width: 150px; height:100px" src="~/Content/@(p.ProductName.Split()[1].ToString()).jpg" /></center>
+                <h5 style="text-align:center">@p.ProductName</h5>
+                <h6 style="text-align:center; width:200px">@p.Description</h6>
+                <form style="text-align:center" method="post">
+                    <input type="submit" value="$@p.Price - Add to Cart" formaction="/Gallery/AddtoCart?productId=@p.ProductId&username=@user">
+                    <input type="hidden" value="Remove from cart" formaction="/Gallery/RemovefromCart?productId=@p.ProductId&username=@user">
+                    <input type="hidden" value="Empty cart" formaction="/Gallery/EmptyCart?productId=@p.ProductId&username=@user">
+                </form>
+            </div>
+        </div>
+    }
+</section>
+
+<style>
+    td, tr {
+        padding: 2px;
+    }
+
+    a {
+        color: #000;
+        font-size: 12px;
+    }
+
+    .button {
+        border: none;
+        padding: 10px 24px;
+        text-align: center;
+        display: inline-block;
+        width: 250px;
+    }
+
+    .btnlink {
+        background: none !important;
+        color: #0645AD;
+        border: none;
+        padding: 0 !important;
+        font: inherit;
+        /*border is optional*/
+        border-bottom: 1px solid #0645AD;
+        cursor: pointer;
+    }
+
+    .products {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .product-card {
+        padding: 2%;
+        flex-grow: 1;
+        flex-basis: 27%;
+        display: flex;
+    }
+
+    .product-info {
+        margin-top: auto;
+    }
+</style>
+
